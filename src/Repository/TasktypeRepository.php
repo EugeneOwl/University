@@ -19,32 +19,8 @@ class TasktypeRepository extends ServiceEntityRepository
         parent::__construct($registry, Tasktype::class);
     }
 
-//    /**
-//     * @return Tasktype[] Returns an array of Tasktype objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function doesTaskTypeExist(string $name): bool
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->findOneBy(["name" => $name]) !== null;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Tasktype
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

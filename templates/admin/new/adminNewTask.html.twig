@@ -4,4 +4,12 @@
     <p>
         <a href="{{ path('app_admin') }}">go to admin manager</a>
     </p>
+    {{ form_start(form) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.period) }}
+        {{ form_row(form.plainTasktype) }}
+    <input type="submit" value="create">
+    {{ form_end(form) }}
+    {{ collisionMessage }}
+    {{ periodErrorMessage }}
 {% endblock %}

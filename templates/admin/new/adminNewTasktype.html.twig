@@ -4,4 +4,8 @@
     <p>
         <a href="{{ path('app_admin') }}">go to admin manager</a>
     </p>
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+    {{ form_end(form) }}
+    {{ collisionMessage }}
 {% endblock %}

@@ -19,32 +19,8 @@ class UsergroupRepository extends ServiceEntityRepository
         parent::__construct($registry, Usergroup::class);
     }
 
-//    /**
-//     * @return Usergroup[] Returns an array of Usergroup objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function doesUsergroupExist(string $name): bool
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->findOneBy(["name" => $name]) !== null;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Usergroup
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

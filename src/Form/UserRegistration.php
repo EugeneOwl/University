@@ -6,7 +6,6 @@ namespace App\Form;
 
 
 use App\Entity\User;
-use App\Entity\Usergroup;
 use App\Repository\UsergroupRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,16 +27,16 @@ class UserRegistration extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', TextType::class)
+            ->add("username", TextType::class)
             ->add("plainUsergroupName", ChoiceType::class, [
-                'choices'  => [
+                "choices"  => [
                     $this->getUsergroupNames()
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'first_options'  => ['label' => 'Password'],
-                'second_options' => ['label' => 'Repeat Password'],
+                "type" => PasswordType::class,
+                "first_options"  => ["label" => "Password"],
+                "second_options" => ["label" => "Repeat Password"],
             ])
         ;
     }

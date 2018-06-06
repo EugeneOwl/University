@@ -56,9 +56,11 @@ class Task
         return $this->period;
     }
 
-    public function setPeriod(int $period): self
+    public function setPeriod($period): self
     {
-        $this->period = $period;
+        if (ctype_digit($period)) {
+            $this->period = $period;
+        }
 
         return $this;
     }
@@ -99,5 +101,17 @@ class Task
         $this->users[] = $user;
 
         return $this;
+    }
+
+    private $plainTasktype;
+
+    public function getPlainTasktype()
+    {
+        return $this->plainTasktype;
+    }
+
+    public function setPlainTasktype($plainTasktype): void
+    {
+        $this->plainTasktype = $plainTasktype;
     }
 }
