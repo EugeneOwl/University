@@ -34,6 +34,7 @@ class RegistrationController extends AbstractController
         ) {
             $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
             $user->setPassword($password);
+            $user->setRoles(["ROLE_USER"]);
 
             $usergroup = $this->getDoctrine()->getRepository(Usergroup::class)->find($user->getPlainUsergroupName());
             $user->setUsergroup($usergroup);

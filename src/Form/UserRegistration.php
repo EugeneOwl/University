@@ -6,7 +6,8 @@ namespace App\Form;
 
 
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Entity\Usergroup;
+use App\Repository\UsergroupRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,6 +18,13 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class UserRegistration extends AbstractType
 {
+    private $usergroupRepository;
+
+    public function __construct(UsergroupRepository $usergroupRepository)
+    {
+        $this->usergroupRepository = $usergroupRepository;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -34,9 +42,12 @@ class UserRegistration extends AbstractType
         ;
     }
 
-    private function getUsergroupNames(): ?array
+    private function getUsergroupNames(): array
     {
-        return ["First year students" => 1];
+        foreach ($this->usergroupRepository->findAll() as $group) {
+            $usergroups[$group->getName()] = $group->getId();
+        }
+        return $usergroups ?? [];
     }
 
     public function configureOptions(OptionsResolver $resolver)
