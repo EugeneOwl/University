@@ -65,9 +65,9 @@ class User implements UserInterface
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Usergroup")
-     * @ORM\JoinColumn(nullable=false)
-     */
+     * @ORM\ManyToOne(targetEntity="App\Entity\Usergroup", inversedBy="users")
+     * @ORM\JoinColumn(nullable=false) //mapped by и inversed by соответствующие аннатации для пары зависимых сущностей
+     */                                //такакя аннатация указывает на сообветствующее поле у противоположной сущности
     private $usergroup;
 
     public function getUsergroup()

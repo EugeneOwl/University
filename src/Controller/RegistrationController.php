@@ -37,6 +37,7 @@ class RegistrationController extends AbstractController
 
             $usergroup = $this->getDoctrine()->getRepository(Usergroup::class)->find($user->getPlainUsergroupName());
             $user->setUsergroup($usergroup);
+            $usergroup->addUser($user);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);

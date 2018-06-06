@@ -64,7 +64,7 @@ class Task
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Tasktype")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Tasktype", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
      */
     private $tasktype;

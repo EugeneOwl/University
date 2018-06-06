@@ -49,8 +49,8 @@ class Tasktype
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="id")
-     */                                                             //id  сущности task
+     * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="tasktype")
+     */
     private $tasks;
 
     /**

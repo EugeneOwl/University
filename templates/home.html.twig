@@ -1,7 +1,17 @@
 {% extends "base.html.twig" %}
 
 {% block contents %}
-    <h4>from {{ usergroup }}</h4>
+    <h4>{{ subheader }}</h4>
+    <br>
+    <h5>Your tasks</h5>
+    <ol>
+    {% for task in tasks %}
+        <li>
+            {{ task.description }}
+        </li>
+    {% endfor %}
+    </ol>
+
     <p>
         <a href="{{ path('app_logout') }}">logout</a>
     </p>

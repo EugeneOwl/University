@@ -47,7 +47,7 @@ class Usergroup
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="id")
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="usergroup")
      */
     private $users;
 
