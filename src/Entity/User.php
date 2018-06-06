@@ -23,7 +23,7 @@ class User implements UserInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    public $id;
 
     public function getId()
     {
@@ -31,7 +31,7 @@ class User implements UserInterface
     }
 
     /**
-     * @ORM\Column(type="string", length=30)
+     * @ORM\Column(type="string", length=30, unique=true)
      */
     private $username;
 
@@ -103,10 +103,6 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Length(max=4096)
-     */
     private $plainPassword;
 
     public function getPlainPassword()
@@ -117,6 +113,18 @@ class User implements UserInterface
     public function setPlainPassword($password)
     {
         $this->plainPassword = $password;
+    }
+
+    private $plainUsergroupName;
+
+    public function getPlainUsergroupName()
+    {
+        return $this->plainUsergroupName;
+    }
+
+    public function setPlainUsergroupName($plainUsergroupName)
+    {
+        $this->plainUsergroupName = $plainUsergroupName;
     }
 
     public function eraseCredentials()

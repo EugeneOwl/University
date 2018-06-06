@@ -1,6 +1,17 @@
 {% extends "base.html.twig" %}
 
 {% block contents %}
+
+    <div>
+        <p>{{ username_message }}</p>
+    </div>
+
+    {{ form_start(form) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.plainUsergroupName) }}
+        {{ form_row(form.plainPassword) }}
+        <button type="submit">Register!</button>
+    {{ form_end(form) }}
     <p>
         <a href="{{ path('app_login') }}">go to login</a>
     </p>
