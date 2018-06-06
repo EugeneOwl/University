@@ -117,7 +117,7 @@ class Task
 
     private $plainUsers;
 
-    public function getPlainUsers(): ?array
+    public function getPlainUsers()
     {
         return $this->plainUsers;
     }
@@ -125,5 +125,17 @@ class Task
     public function setPlainUsers($plainUsers): void
     {
         $this->plainUsers = $plainUsers;
+    }
+
+    private $plainTasks;
+
+    public function getPlainTasks()
+    {
+        return $this->plainTasks;
+    }
+
+    public function setPlainTasks($plainTasks): void
+    {
+        $this->plainTasks = $plainTasks;
     }
 }

@@ -5,6 +5,12 @@
         <a href="{{ path('app_admin') }}">go to admin manager</a>
     </p>
 
+    {{ form_start(form) }}
+        {{ form_row(form.plainUsers) }}
+        {{ form_row(form.plainTasks) }}
+        <input type="submit" value="bind together">
+    {{ form_end(form) }}
+
     <br><br>
     <h5>Existing users with there tasks</h5>
     {% if users is empty %}

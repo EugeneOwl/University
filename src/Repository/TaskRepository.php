@@ -14,13 +14,24 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class TaskRepository extends ServiceEntityRepository
 {
+    private $connection;
+
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Task::class);
+        $this->connection = $this->getEntityManager()->getConnection();
     }
 
     public function doesTaskExist(string $description): bool
     {
         return $this->findOneBy(["description" => $description]) !== null;
+    }
+
+    public function findAllOrderedByPeriod(): array
+    {
+        $sql = "SELECT * FROM `tasks` ORDER BY `period` ASC";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

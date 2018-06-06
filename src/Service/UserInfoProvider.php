@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace App\Service;
 
 
-use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
 
 class UserInfoProvider
@@ -28,5 +27,16 @@ class UserInfoProvider
             }
         }
         return $users ?? [];
+    }
+
+    public function doesUserOwnTask(string $username, string $taskDescription): bool
+    {
+        $tasks = $this->userRepository->findOneBy(["username" => $username])->getTasks();
+        foreach ($tasks as $task) {
+            if ($task->getDescription() === $taskDescription) {
+                return true;
+            }
+        }
+        return false;
     }
 }

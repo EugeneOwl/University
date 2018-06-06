@@ -5,11 +5,13 @@ declare(strict_types = 1);
 namespace App\Controller;
 
 use App\Entity\Task;
+use App\Entity\User;
 use App\Entity\Usergroup;
+use App\Entity\TaskType;
+use App\Form\Admin\TaskAndUserBinding;
 use App\Form\Admin\TaskCreating;
 use App\Form\Admin\TasktypeCreating;
 use App\Form\Admin\UsergroupCreating;
-use App\Entity\TaskType;
 use App\Service\UserInfoProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -127,19 +129,44 @@ class AdminController extends AbstractController
             "form"             => $form->createView(),
             "collisionMessage" => $doesTaskExist ? self::COLLISION_WARNING : "",
             "periodErrorMessage" => $isPeriodCorrect ? "" : "Period should be number! (amount of days)",
-            "tasks"            => $taskRepository->findAll(),
+            "tasks"            => $taskRepository->findAllOrderedByPeriod(),
         ]);
     }
 
     /**
      * @Route("/admin/bind/taskAndUser", name="app_admin_bind_task_and_user")
      */
-    public function bindTaskAndUser(UserInfoProvider $userInfoProvider): Response
+    public function bindTaskAndUser(Request $request, UserInfoProvider $userInfoProvider): Response
     {
+        $task = new Task();
+        $userRepository = $this->getDoctrine()->getRepository(User::class);
+        $taskRepository = $this->getDoctrine()->getRepository(Task::class);
+        $form = $this->createForm(TaskAndUserBinding::class, $task);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $docrineManager = $this->getDoctrine()->getManager();
+
+            $user = $userRepository->find($task->getPlainUsers());
+            $task = $taskRepository->find($task->getPlainTasks());
+
+            if (!$userInfoProvider->doesUserOwnTask($user->getUsername(), $task->getDescription())) {
+                $task->addUser($user);
+                $user->addTask($task);
+
+                $docrineManager->persist($user);
+                $docrineManager->persist($task);
+                $docrineManager->flush();
+                echo "Now user '{$user->getUsername()}' has task '{$task->getDescription()}'.";
+            } else {
+                echo "The user already has this task.";
+            }
+        }
         return $this->render("admin/bind/adminBindTaskAndUser.html.twig", [
             "title"  => "Bind task and user",
             "header" => "Bind task to user!",
             "users"  => $userInfoProvider->getUsersWithTasks(),
+            "form"   => $form->createView(),
         ]);
     }
 }

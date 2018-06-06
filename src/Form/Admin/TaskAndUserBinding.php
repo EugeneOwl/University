@@ -9,8 +9,6 @@ use App\Repository\UserRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class TaskAndUserBinding extends AbstractType
@@ -32,7 +30,20 @@ class TaskAndUserBinding extends AbstractType
                     $this->getUsers(),
                 ],
             ])
+            ->add("plainTasks", ChoiceType::class, [
+                "choices" => [
+                    $this->getTasks(),
+                ],
+            ])
         ;
+    }
+
+    private function getTasks(): array
+    {
+        foreach ($this->taskRepository->findAll() as $task) {
+            $tasks[$task->getDescription()] = $task->getId();
+        }
+        return $tasks ?? [];
     }
 
     private function getUsers(): array
