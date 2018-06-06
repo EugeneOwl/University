@@ -114,4 +114,16 @@ class Task
     {
         $this->plainTasktype = $plainTasktype;
     }
+
+    private $plainUsers;
+
+    public function getPlainUsers(): ?array
+    {
+        return $this->plainUsers;
+    }
+
+    public function setPlainUsers($plainUsers): void
+    {
+        $this->plainUsers = $plainUsers;
+    }
 }

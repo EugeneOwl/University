@@ -8,4 +8,18 @@
         {{ form_row(form.name) }}
     {{ form_end(form) }}
     {{ collisionMessage }}
+
+    <br><br>
+    <h5>Existing task types:</h5>
+    {% if tasktypes is empty %}
+        <p>(empty set)</p>
+    {% endif %}
+
+    <ol>
+        {% for tasktype in tasktypes %}
+            <li>
+                {{ tasktype.name }}
+            </li>
+        {% endfor %}
+    </ol>
 {% endblock %}

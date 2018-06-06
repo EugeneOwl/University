@@ -4,4 +4,20 @@
     <p>
         <a href="{{ path('app_admin') }}">go to admin manager</a>
     </p>
+
+    <br><br>
+    <h5>Existing users with there tasks</h5>
+    {% if users is empty %}
+        <p>(empty set)</p>
+    {% endif %}
+    <ol>
+        {% for username in users|keys %}
+            <li>{{ username }}</li>
+            <ul>
+                {% for task in users[username] %}
+                    <li>{{ task }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </ol>
 {% endblock %}

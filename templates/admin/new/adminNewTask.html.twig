@@ -4,6 +4,8 @@
     <p>
         <a href="{{ path('app_admin') }}">go to admin manager</a>
     </p>
+
+    <br><br>
     {{ form_start(form) }}
         {{ form_row(form.description) }}
         {{ form_row(form.period) }}
@@ -12,4 +14,18 @@
     {{ form_end(form) }}
     {{ collisionMessage }}
     {{ periodErrorMessage }}
+
+    <br><br>
+    <h5>Existing tasks:</h5>
+    {% if tasks is empty %}
+        <p>(empty set)</p>
+    {% endif %}
+
+    <ol>
+        {% for task in tasks %}
+            <li>
+                {{ task.description }} ({{ task.period }} days)
+            </li>
+        {% endfor %}
+    </ol>
 {% endblock %}

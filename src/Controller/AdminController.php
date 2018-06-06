@@ -6,10 +6,11 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Entity\Usergroup;
-use App\Form\Admin\TaskCreation;
-use App\Form\Admin\TasktypeCreation;
-use App\Form\Admin\UsergroupCreation;
+use App\Form\Admin\TaskCreating;
+use App\Form\Admin\TasktypeCreating;
+use App\Form\Admin\UsergroupCreating;
 use App\Entity\TaskType;
+use App\Service\UserInfoProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +40,7 @@ class AdminController extends AbstractController
     {
         $usergroup = new Usergroup();
         $usergroupRepository = $this->getDoctrine()->getRepository(Usergroup::class);
-        $form = $this->createForm(UsergroupCreation::class, $usergroup);
+        $form = $this->createForm(UsergroupCreating::class, $usergroup);
 
         $doesUsergroupExist = false;
         $form->handleRequest($request);
@@ -60,6 +61,7 @@ class AdminController extends AbstractController
             "header" => "Create new user group!",
             "form"   => $form->createView(),
             "collisionMessage" => $doesUsergroupExist ? self::COLLISION_WARNING : "",
+            "usergroups" => $usergroupRepository->findAll(),
         ]);
     }
 
@@ -70,7 +72,7 @@ class AdminController extends AbstractController
     {
         $tasktype = new TaskType();
         $tasktypeRepository = $this->getDoctrine()->getRepository(TaskType::class);
-        $form = $this->createForm(TasktypeCreation::class, $tasktype);
+        $form = $this->createForm(TasktypeCreating::class, $tasktype);
 
         $doesTasktypeExist = false;
         $form->handleRequest($request);
@@ -86,10 +88,11 @@ class AdminController extends AbstractController
             echo self::CREATION_MESSAGE;
         }
         return $this->render("admin/new/adminNewTasktype.html.twig", [
-            "title" => "new task type",
-            "header" => "Create new task type!",
-            "form"   => $form->createView(),
+            "title"            => "new task type",
+            "header"           => "Create new task type!",
+            "form"             => $form->createView(),
             "collisionMessage" => $doesTasktypeExist ? self::COLLISION_WARNING : "",
+            "tasktypes"        => $tasktypeRepository->findAll(),
         ]);
     }
 
@@ -100,7 +103,7 @@ class AdminController extends AbstractController
     {
         $task = new Task();
         $taskRepository = $this->getDoctrine()->getRepository(Task::class);
-        $form = $this->createForm(TaskCreation::class, $task);
+        $form = $this->createForm(TaskCreating::class, $task);
         $doesTaskExist = false;
         $isPeriodCorrect = true;
 
@@ -124,17 +127,19 @@ class AdminController extends AbstractController
             "form"             => $form->createView(),
             "collisionMessage" => $doesTaskExist ? self::COLLISION_WARNING : "",
             "periodErrorMessage" => $isPeriodCorrect ? "" : "Period should be number! (amount of days)",
+            "tasks"            => $taskRepository->findAll(),
         ]);
     }
 
     /**
      * @Route("/admin/bind/taskAndUser", name="app_admin_bind_task_and_user")
      */
-    public function bindTaskAndUser(): Response
+    public function bindTaskAndUser(UserInfoProvider $userInfoProvider): Response
     {
         return $this->render("admin/bind/adminBindTaskAndUser.html.twig", [
-            "title" => "Bind task and user",
+            "title"  => "Bind task and user",
             "header" => "Bind task to user!",
+            "users"  => $userInfoProvider->getUsersWithTasks(),
         ]);
     }
 }

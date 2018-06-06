@@ -4,6 +4,10 @@
     <h4>{{ subheader }}</h4>
     <br>
     <h5>Your tasks</h5>
+    {% if tasks is empty %}
+        <p>(empty set)</p>
+    {% endif %}
+
     <ol>
     {% for task in tasks %}
         <li>

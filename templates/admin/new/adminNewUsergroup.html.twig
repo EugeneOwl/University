@@ -4,8 +4,23 @@
     <p>
         <a href="{{ path('app_admin') }}">go to admin manager</a>
     </p>
+
     {{ form_start(form) }}
         {{ form_row(form.name) }}
     {{ form_end(form) }}
     {{ collisionMessage }}
+
+    <br><br>
+    <h5>Existing usergroups:</h5>
+    {% if usergroups is empty %}
+        <p>(empty set)</p>
+    {% endif %}
+
+    <ol>
+        {% for usergroup in usergroups %}
+            <li>
+                {{ usergroup.name }}
+            </li>
+        {% endfor %}
+    </ol>
 {% endblock %}
