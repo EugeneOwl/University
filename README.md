@@ -1,4 +1,4 @@
-#Working with a doctrine MySQL entities and relations
+# Working with a doctrine MySQL entities and relations
 
 There are 4 main entities:
 1. User
@@ -23,7 +23,7 @@ When configuring entities in each case admin sees the existing exemplar of targe
 
 Forms are not hardcodded into html but implemented as special objects, processed special way in controllers and displayed special way in templates (see _'src/Form'_, _'src/Controller'_, _'templates'_).
 
-##P.S.
+## P.S.
 Админитратор может _конфигурировать_ сущности: **создавать** новые и **связывать** существующие. Можно ещё реализовать **удаление** и **редактирование** существующих. Если есть смысл.
 
 Конкретно по этому заданию фундаментальных вопросов нет. Кроме одного: "Можно ли пользоваться репозиторием напрямую в контроллере? Или нужно всегда создавать сервис, к которму обращается контроллер и который обращается к репозиторию? Или это вообще не принципиально? Архитектура всё таки..".
