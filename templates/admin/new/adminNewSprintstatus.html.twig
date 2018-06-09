@@ -1,0 +1,25 @@
+{% extends "base.html.twig" %}
+
+{% block contents %}
+    <p>
+        <a href="{{ path('app_admin') }}">go to admin manager</a>
+    </p>
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_end(form) }}
+    {{ collisionMessage }}
+
+    <br><br>
+    <h5>Existing sprint statuses:</h5>
+    {% if statuses is empty %}
+        <p>(empty set)</p>
+    {% endif %}
+
+    <ol>
+        {% for status in statuses %}
+            <li>
+                {{ status.name }}
+            </li>
+        {% endfor %}
+    </ol>
+{% endblock %}

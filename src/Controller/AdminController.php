@@ -4,10 +4,12 @@ declare(strict_types = 1);
 
 namespace App\Controller;
 
+use App\Entity\Sprintstatus;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Entity\Usergroup;
 use App\Entity\TaskType;
+use App\Form\Admin\SprintstatusCreating;
 use App\Form\Admin\TaskAndUserBinding;
 use App\Form\Admin\TaskCreating;
 use App\Form\Admin\TasktypeCreating;
@@ -132,6 +134,37 @@ class AdminController extends AbstractController
             "collisionMessage" => $doesTaskExist ? self::COLLISION_WARNING : "",
             "periodErrorMessage" => $isPeriodCorrect ? "" : "Period should be number! (amount of days)",
             "tasks"            => $taskRepository->findAllOrderedByPeriod(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/new/sprintstatus", name="app_admin_new_sprintstatus")
+     */
+    public function newSprintstatus(Request $request): Response
+    {
+        $status = new Sprintstatus();
+        $statusRepository = $this->getDoctrine()->getRepository(Sprintstatus::class);
+        $form = $this->createForm(SprintstatusCreating::class, $status);
+
+        $doesStatusExist = false;
+        $form->handleRequest($request);
+        if (
+            $form->isSubmitted() &&
+            $form->isValid() &&
+            !empty(trim((string)($status->getName()))) &&
+            ($doesStatusExist = $statusRepository->doesTaskTypeExist($status->getName())) === false
+        ) {
+            $doctrineManager = $this->getDoctrine()->getManager();
+            $doctrineManager->persist($status);
+            $doctrineManager->flush();
+            echo self::CREATION_MESSAGE;
+        }
+        return $this->render("admin/new/adminNewSprintstatus.html.twig", [
+            "title"            => "new task type",
+            "header"           => "Create new task type!",
+            "form"             => $form->createView(),
+            "collisionMessage" => $doesStatusExist ? self::COLLISION_WARNING : "",
+            "statuses"        => $statusRepository->findAll(),
         ]);
     }
 
