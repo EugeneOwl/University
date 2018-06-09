@@ -47,7 +47,8 @@ class Usergroup
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="usergroup")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User")
+     * @ORM\JoinTable(name="usergroup_user")
      */
     private $users;
 

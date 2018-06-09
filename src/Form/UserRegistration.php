@@ -28,7 +28,7 @@ class UserRegistration extends AbstractType
     {
         $builder
             ->add("username", TextType::class)
-            ->add("plainUsergroupName", ChoiceType::class, [
+            ->add("plainUsergroupId", ChoiceType::class, [
                 "choices"  => [
                     $this->getUsergroupNames()
                 ],
@@ -43,10 +43,11 @@ class UserRegistration extends AbstractType
 
     private function getUsergroupNames(): array
     {
+        $usergroups["(no group)"] = -1;
         foreach ($this->usergroupRepository->findAll() as $group) {
             $usergroups[$group->getName()] = $group->getId();
         }
-        return $usergroups ?? [];
+        return $usergroups;
     }
 
     public function configureOptions(OptionsResolver $resolver)

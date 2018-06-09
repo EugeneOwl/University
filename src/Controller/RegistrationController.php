@@ -36,13 +36,14 @@ class RegistrationController extends AbstractController
             $user->setPassword($password);
             $user->setRoles(["ROLE_USER"]);
 
-            $usergroup = $this->getDoctrine()->getRepository(Usergroup::class)->find($user->getPlainUsergroupName());
-            $user->setUsergroup($usergroup);
-            $usergroup->addUser($user);
+            if ($user->getPlainUsergroupId() > 0) {
+                $usergroup = $this->getDoctrine()->getRepository(Usergroup::class)->find($user->getPlainUsergroupId());
+                $usergroup->addUser($user);
+                $this->getDoctrine()->getManager()->persist($usergroup);
+            }
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $this->getDoctrine()->getManager()->persist($user);
+            $this->getDoctrine()->getManager()->flush();
             return $this->redirectToRoute('app_home');
         }
 

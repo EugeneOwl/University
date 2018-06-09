@@ -47,22 +47,4 @@ class Tasktype
 
         return $this;
     }
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="tasktype")
-     */
-    private $tasks;
-
-    /**
-     * @return Collection|Task[]
-     */
-    public function getTasks(): Collection
-    {
-        return $this->tasks;
-    }
-
-    public function addTask(Task $task): void
-    {
-        $this->tasks[] = $task;
-    }
 }
