@@ -25,10 +25,11 @@ class TaskCreating extends AbstractType
 
     private function getTasktypes(): array
     {
+        $tasktypes["(no topic)"] = -1;
         foreach ($this->tasktypeRepository->findAll() as $tasktype) {
             $tasktypes[$tasktype->getName()] = $tasktype->getId();
         }
-        return $tasktypes ?? [];
+        return $tasktypes;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -36,7 +37,7 @@ class TaskCreating extends AbstractType
         $builder
             ->add("description", TextareaType::class)
             ->add("period", TextType::class)
-            ->add("plainTasktype", ChoiceType::class, [
+            ->add("plainTasktypeId", ChoiceType::class, [
                 "choices" => [
                     $this->getTasktypes(),
                 ],

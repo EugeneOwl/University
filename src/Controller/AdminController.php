@@ -118,7 +118,9 @@ class AdminController extends AbstractController
             ($doesTaskExist = $taskRepository->doesTaskExist($task->getDescription())) === false
         ) {
             $doctrineManager = $this->getDoctrine()->getManager();
-            $task->setTasktype($doctrineManager->getRepository(TaskType::class)->find($task->getPlainTasktype()));
+            if ($task->getPlainTasktypeId() > 0) {
+                $task->setTasktype($doctrineManager->getRepository(TaskType::class)->find($task->getPlainTasktypeId()));
+            }
             $doctrineManager->persist($task);
             $doctrineManager->flush();
             echo self::CREATION_MESSAGE;

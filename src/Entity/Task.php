@@ -67,7 +67,7 @@ class Task
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Tasktype")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $tasktype;
 
@@ -103,16 +103,16 @@ class Task
         return $this;
     }
 
-    private $plainTasktype;
+    private $plainTasktypeId;
 
-    public function getPlainTasktype()
+    public function getPlainTasktypeId()
     {
-        return $this->plainTasktype;
+        return $this->plainTasktypeId;
     }
 
-    public function setPlainTasktype($plainTasktype): void
+    public function setPlainTasktypeId($plainTasktypeId): void
     {
-        $this->plainTasktype = $plainTasktype;
+        $this->plainTasktypeId = $plainTasktypeId;
     }
 
     private $plainUsers;
