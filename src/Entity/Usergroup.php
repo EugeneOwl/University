@@ -14,7 +14,6 @@ class Usergroup
 {
     public function __construct()
     {
-        $this->users = new ArrayCollection();
     }
 
     /**
@@ -47,21 +46,20 @@ class Usergroup
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="usergroup")
+     * @ORM\Column(type="array")
      */
-    private $users;
+    private $user_ids;
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsers(): Collection
+    public function getUsers(): array
     {
-        return $this->users;
+        return $this->user_ids;
     }
 
     public function addUser(User $user): self
     {
-        $this->users[] = $user;
+        if (empty($this->user_ids) || !in_array($user->getId(), $this->user_ids)) {
+            $this->user_ids[] = $user->getId();
+        }
 
         return $this;
     }

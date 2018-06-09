@@ -36,13 +36,15 @@ class RegistrationController extends AbstractController
             $user->setPassword($password);
             $user->setRoles(["ROLE_USER"]);
 
-            $usergroup = $this->getDoctrine()->getRepository(Usergroup::class)->find($user->getPlainUsergroupName());
-            $user->setUsergroup($usergroup);
-            $usergroup->addUser($user);
+            $this->getDoctrine()->getManager()->persist($user);
+            $this->getDoctrine()->getManager()->flush();
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+            if ($user->getPlainUsergroupId() > 0) {
+                $this->updateGroup(
+                    $this->getDoctrine()->getRepository(User::class)->findOneBy(["username" => $user->getUsername()])
+                );
+            }
+
             return $this->redirectToRoute('app_home');
         }
 
@@ -52,5 +54,13 @@ class RegistrationController extends AbstractController
             "form"              => $form->createView(),
             "username_message"  => $isUsernameFree ? "" : "Username is already taken",
         ]);
+    }
+
+    private function updateGroup(User $user)
+    {
+        $usergroup = $this->getDoctrine()->getRepository(Usergroup::class)->find($user->getPlainUsergroupId());
+        $usergroup->addUser($user);
+        $this->getDoctrine()->getManager()->persist($usergroup);
+        $this->getDoctrine()->getManager()->flush();
     }
 }

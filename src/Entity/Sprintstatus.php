@@ -1,18 +1,13 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace App\Entity;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TasktypeRepository")
- * @ORM\Table(name="tasktypes")
+ * @ORM\Entity(repositoryClass="App\Repository\SprintstatusRepository")
  */
-class Tasktype
+class Sprintstatus
 {
     /**
      * @ORM\Id()
@@ -21,15 +16,15 @@ class Tasktype
      */
     private $id;
 
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $name;
+
     public function getId()
     {
         return $this->id;
     }
-
-    /**
-     * @ORM\Column(type="string", length=30)
-     */
-    private $name;
 
     public function getName(): ?string
     {

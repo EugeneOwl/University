@@ -65,24 +65,6 @@ class User implements UserInterface
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Usergroup", inversedBy="users")
-     * @ORM\JoinColumn(nullable=false) //mapped by и inversed by соответствующие аннатации для пары зависимых сущностей
-     */                                //такакя аннатация указывает на сообветствующее поле у противоположной сущности
-    private $usergroup;
-
-    public function getUsergroup()
-    {
-        return $this->usergroup;
-    }
-
-    public function setUsergroup(Usergroup $usergroup): self
-    {
-        $this->usergroup = $usergroup;
-
-        return $this;
-    }
-
-    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Task", inversedBy="users")
      * @ORM\JoinTable(name="users_tasks")
      */
@@ -115,16 +97,16 @@ class User implements UserInterface
         $this->plainPassword = $password;
     }
 
-    private $plainUsergroupName;
+    private $plainUsergroupId;
 
-    public function getPlainUsergroupName()
+    public function getPlainUsergroupId()
     {
-        return $this->plainUsergroupName;
+        return $this->plainUsergroupId;
     }
 
-    public function setPlainUsergroupName($plainUsergroupName)
+    public function setPlainUsergroupId($plainUsergroupId)
     {
-        $this->plainUsergroupName = $plainUsergroupName;
+        $this->plainUsergroupId = $plainUsergroupId;
     }
 
     /**

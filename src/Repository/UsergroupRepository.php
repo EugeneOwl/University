@@ -23,4 +23,18 @@ class UsergroupRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(["name" => $name]) !== null;
     }
+
+    public function getUsergroup(int $userId): ?Usergroup
+    {
+        $sql = "SELECT * FROM `usergroups` WHERE `user_ids` LIKE :pattern";
+        $pattern = "%i:0;i:17%";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute(["pattern" => $pattern]);
+        $usergroupRow = $stmt->fetch()["id"];
+        if (empty($usergroupRow)) {
+            return null;
+        }
+        $usergroupId = $stmt->fetch()["id"];
+        return $this->find()
+    }
 }

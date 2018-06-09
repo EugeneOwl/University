@@ -66,7 +66,7 @@ class Task
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Tasktype", inversedBy="tasks")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Tasktype")
      * @ORM\JoinColumn(nullable=false)
      */
     private $tasktype;
@@ -99,6 +99,23 @@ class Task
     public function addUser(User $user): self
     {
         $this->users[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\Column(type="boolean", name="execution", nullable=false)
+     */
+    private $isDone;
+
+    public function getIsDone(): bool
+    {
+        return $this->isDone;
+    }
+
+    public function setIsDone(bool $isDone): self
+    {
+        $this->isDone = $isDone;
 
         return $this;
     }

@@ -19,42 +19,19 @@ class DoctrineTestController extends AbstractController
      */
     public function run(): Response
     {
-
-
+        $this->addUserToUsergroup();
         return new Response("Done.");
     }
 
+    private function createUserToUsergroup()
+    {
+
+    }
+
+
     private function create()
     {
-        $usergroup = new Usergroup();
-        $usergroup->setName("First year students");
-
-        $user = new User();
-        $user->setUsername("user");
-        $user->setPassword("password");
-
-        $user->setUsergroup($usergroup);
-        $usergroup->addUser($user);
-
-
-        $tasktype = new Tasktype();
-        $tasktype->setName("Tasktype 1");
-
-        $task = new Task();
-        $task->setDescription("Task 1.");
-        $task->setPeriod(3);
-
-        $tasktype->addTask($task);
-        $task->setTasktype($tasktype);
-
-
-        $user->addTask($task);
-        $task->addUser($user);
-
-        $this->getDoctrine()->getManager()->persist($usergroup);
-        $this->getDoctrine()->getManager()->persist($user);
-        $this->getDoctrine()->getManager()->persist($tasktype);
-        $this->getDoctrine()->getManager()->persist($task);
+        $this->getDoctrine()->getRepository(User::class)->find(1);
 
         //$this->getDoctrine()->getManager()->flush();
     }
