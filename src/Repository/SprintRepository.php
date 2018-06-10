@@ -19,32 +19,8 @@ class SprintRepository extends ServiceEntityRepository
         parent::__construct($registry, Sprint::class);
     }
 
-//    /**
-//     * @return Sprint[] Returns an array of Sprint objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function doesSprintExist(string $name): bool
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->findOneBy(["name" => $name]) !== null;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Sprint
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

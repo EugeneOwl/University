@@ -4,11 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Controller;
 
+use App\Entity\Sprint;
 use App\Entity\Sprintstatus;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Entity\Usergroup;
 use App\Entity\TaskType;
+use App\Form\Admin\SprintCreating;
 use App\Form\Admin\SprintstatusCreating;
 use App\Form\Admin\TaskAndUserBinding;
 use App\Form\Admin\TaskCreating;
@@ -54,7 +56,7 @@ class AdminController extends AbstractController
             $form->isSubmitted() &&
             $form->isValid() &&
             !empty(trim((string)($usergroup->getName()))) &&
-            ($doesUsergroupExist = $usergroupRepository->doesUsergroupExist($usergroup->getName())) === false
+            !($doesUsergroupExist = $usergroupRepository->doesUsergroupExist($usergroup->getName()))
         ) {
             $doctrineManager = $this->getDoctrine()->getManager();
             $doctrineManager->persist($usergroup);
@@ -86,7 +88,7 @@ class AdminController extends AbstractController
             $form->isSubmitted() &&
             $form->isValid() &&
             !empty(trim((string)($tasktype->getName()))) &&
-            ($doesTasktypeExist = $tasktypeRepository->doesTaskTypeExist($tasktype->getName())) === false
+            !($doesTasktypeExist = $tasktypeRepository->doesTaskTypeExist($tasktype->getName()))
         ) {
             $doctrineManager = $this->getDoctrine()->getManager();
             $doctrineManager->persist($tasktype);
@@ -118,8 +120,8 @@ class AdminController extends AbstractController
             $form->isSubmitted() &&
             $form->isValid() &&
             !empty(trim((string)($task->getDescription()))) &&
-            ($isPeriodCorrect = ctype_digit(trim((string)$task->getPeriod()))) === true &&
-            ($doesTaskExist = $taskRepository->doesTaskExist($task->getDescription())) === false
+            ($isPeriodCorrect = ctype_digit(trim((string)$task->getPeriod()))) &&
+            !($doesTaskExist = $taskRepository->doesTaskExist($task->getDescription()))
         ) {
             $task->setIsDone(false);
             $doctrineManager = $this->getDoctrine()->getManager();
@@ -155,7 +157,7 @@ class AdminController extends AbstractController
             $form->isSubmitted() &&
             $form->isValid() &&
             !empty(trim((string)($status->getName()))) &&
-            ($doesStatusExist = $statusRepository->doesTaskTypeExist($status->getName())) === false
+            !($doesStatusExist = $statusRepository->doesTaskTypeExist($status->getName()))
         ) {
             $doctrineManager = $this->getDoctrine()->getManager();
             $doctrineManager->persist($status);
@@ -168,6 +170,37 @@ class AdminController extends AbstractController
             "form"             => $form->createView(),
             "collisionMessage" => $doesStatusExist ? self::COLLISION_WARNING : "",
             "statuses"        => $statusRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/new/sprint", name="app_admin_new_sprint")
+     */
+    public function newSprint(Request $request): Response
+    {
+        $sprint = new Sprint();
+        $sprintRepository = $this->getDoctrine()->getRepository(Sprint::class);
+        $form = $this->createForm(SprintCreating::class, $sprint);
+
+        $doesSprintExist = false;
+        $form->handleRequest($request);
+        if (
+            $form->isSubmitted() &&
+            $form->isValid() &&
+            !($doesSprintExist = $sprintRepository->doesSprintExist($sprint->getName()))
+        ) {
+            $status = $this->getDoctrine()->getRepository(Sprintstatus::class)->find($sprint->getPlainStatus());
+            $sprint->setStatus($status);
+            $this->getDoctrine()->getManager()->persist($sprint);
+            $this->getDoctrine()->getManager()->flush();
+            echo self::CREATION_MESSAGE;
+        }
+        return $this->render("admin/new/adminNewSprint.html.twig", [
+            "title"            => "new sprint",
+            "header"           => "Create new sprint!",
+            "form"             => $form->createView(),
+            "sprints"          => $sprintRepository->findAll(),
+            "collisionMessage" => $doesSprintExist ? self::COLLISION_WARNING : "",
         ]);
     }
 

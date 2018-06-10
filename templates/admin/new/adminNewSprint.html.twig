@@ -1,0 +1,29 @@
+{% extends "base.html.twig" %}
+
+{% block contents %}
+    <p>
+        <a href="{{ path('app_admin') }}">go to admin manager</a>
+    </p>
+
+    <br><br>
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.plainStatus) }}
+        <input type="submit" value="create">
+    {{ form_end(form) }}
+    {{ collisionMessage }}
+
+    <br><br>
+    <h5>Existing sprints:</h5>
+    {% if sprints is empty %}
+        <p>(empty set)</p>
+    {% endif %}
+
+    <ol>
+        {% for sprint in sprints %}
+            <li>
+                {{ sprint.name }} ({{ sprint.status.name }})
+            </li>
+        {% endfor %}
+    </ol>
+{% endblock %}
