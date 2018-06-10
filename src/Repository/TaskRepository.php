@@ -34,4 +34,28 @@ class TaskRepository extends ServiceEntityRepository
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function executeByIds(array $ids, array $executedIds): int
+    {
+        $affectedRowsCount = 0;
+        $sql = "UPDATE `tasks` SET `execution` = :isDone WHERE `id` = :id AND `execution` != :isDone";
+        $stmt = $this->connection->prepare($sql);
+
+        $notExecutedIds = array_diff($ids, $executedIds);
+        foreach ($notExecutedIds as $notExecutedId) {
+            $stmt->execute([
+                "isDone" => 0,
+                "id"     => $notExecutedId,
+            ]);
+            $affectedRowsCount += $stmt->rowCount();
+        }
+        foreach ($executedIds as $executedId) {
+            $stmt->execute([
+                "isDone" => 1,
+                "id"     => $executedId,
+            ]);
+            $affectedRowsCount += $stmt->rowCount();
+        }
+        return $affectedRowsCount;
+    }
 }

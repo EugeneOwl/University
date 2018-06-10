@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/admin/editTask.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block contents %}
+    <p>
+        <a href="{{ path('app_admin') }}">go to admin manager</a>
+    </p>
+    {{ form_start(form) }}
+    {% for task in form.plainTasks %}
+        <div>
+            {{ form_row(task) }}
+        </div>
+    {% endfor %}
+    <input type="submit" value="update">
+    {{ form_end(form) }}
+{% endblock %}

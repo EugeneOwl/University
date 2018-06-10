@@ -103,6 +103,23 @@ class Task
         return $this;
     }
 
+    /**
+     * @ORM\Column(type="boolean", name="execution")
+     */
+    private $isDone;
+
+    public function getIsDone(): bool
+    {
+        return $this->isDone;
+    }
+
+    public function setIsDone(bool $isDone): self
+    {
+        $this->isDone = $isDone;
+
+        return $this;
+    }
+
     private $plainTasktypeId;
 
     public function getPlainTasktypeId()

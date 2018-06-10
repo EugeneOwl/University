@@ -12,6 +12,7 @@ use App\Entity\TaskType;
 use App\Form\Admin\SprintstatusCreating;
 use App\Form\Admin\TaskAndUserBinding;
 use App\Form\Admin\TaskCreating;
+use App\Form\Admin\TaskEditing;
 use App\Form\Admin\TasktypeCreating;
 use App\Form\Admin\UsergroupCreating;
 use App\Service\UserInfoProvider;
@@ -24,6 +25,7 @@ class AdminController extends AbstractController
 {
     private const COLLISION_WARNING = "Entity with this name does already exist.";
     private const CREATION_MESSAGE = "Entity created.";
+    private const UPDATING_MESSAGE = "Entities updated.";
 
     /**
      * @Route("/admin", name="app_admin")
@@ -119,6 +121,7 @@ class AdminController extends AbstractController
             ($isPeriodCorrect = ctype_digit(trim((string)$task->getPeriod()))) === true &&
             ($doesTaskExist = $taskRepository->doesTaskExist($task->getDescription())) === false
         ) {
+            $task->setIsDone(false);
             $doctrineManager = $this->getDoctrine()->getManager();
             if ($task->getPlainTasktypeId() > 0) {
                 $task->setTasktype($doctrineManager->getRepository(TaskType::class)->find($task->getPlainTasktypeId()));
@@ -160,11 +163,37 @@ class AdminController extends AbstractController
             echo self::CREATION_MESSAGE;
         }
         return $this->render("admin/new/adminNewSprintstatus.html.twig", [
-            "title"            => "new task type",
-            "header"           => "Create new task type!",
+            "title"            => "new sprint status",
+            "header"           => "Create new sprint status!",
             "form"             => $form->createView(),
             "collisionMessage" => $doesStatusExist ? self::COLLISION_WARNING : "",
             "statuses"        => $statusRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/edit/task", name="app_admin_edit_task")
+     */
+    public function editTask(Request $request): Response
+    {
+        $tasks = new Task();
+        $form = $this->createForm(TaskEditing::class, $tasks);
+
+        $form->handleRequest($request);
+        if (
+            $form->isSubmitted() &&
+            $form->isValid()
+        ) {
+            $updatedAmount = $this->getDoctrine()->getRepository(Task::class)->executeByIds(
+                TaskEditing::getTasks(),
+                $tasks->getPlainTasks()
+            );
+            echo $updatedAmount . " " . self::UPDATING_MESSAGE;
+        }
+        return $this->render("admin/edit/adminEditTask.html.twig", [
+            "title"            => "update tasks",
+            "header"           => "Update tasks!",
+            "form"             => $form->createView(),
         ]);
     }
 
