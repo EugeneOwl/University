@@ -10,6 +10,9 @@ use App\Entity\Task;
 use App\Entity\User;
 use App\Entity\Usergroup;
 use App\Entity\TaskType;
+use App\Form\Admin\SprintAndTaskBinding;
+use App\Form\Admin\SprintAndUserBinding;
+use App\Form\Admin\SprintAndUsergroupBinding;
 use App\Form\Admin\SprintCreating;
 use App\Form\Admin\SprintstatusCreating;
 use App\Form\Admin\TaskAndUserBinding;
@@ -17,6 +20,7 @@ use App\Form\Admin\TaskCreating;
 use App\Form\Admin\TaskEditing;
 use App\Form\Admin\TasktypeCreating;
 use App\Form\Admin\UsergroupCreating;
+use App\Service\SprintInfoProvider;
 use App\Service\UserInfoProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +32,7 @@ class AdminController extends AbstractController
     private const COLLISION_WARNING = "Entity with this name does already exist.";
     private const CREATION_MESSAGE = "Entity created.";
     private const UPDATING_MESSAGE = "Entities updated.";
+    private const ALREADY_BINDED_MESSAGE = "This entities are already binded.";
 
     /**
      * @Route("/admin", name="app_admin")
@@ -213,10 +218,7 @@ class AdminController extends AbstractController
         $form = $this->createForm(TaskEditing::class, $tasks);
 
         $form->handleRequest($request);
-        if (
-            $form->isSubmitted() &&
-            $form->isValid()
-        ) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $updatedAmount = $this->getDoctrine()->getRepository(Task::class)->executeByIds(
                 TaskEditing::getTasks(),
                 $tasks->getPlainTasks()
@@ -256,7 +258,7 @@ class AdminController extends AbstractController
                 $docrineManager->flush();
                 echo "Now user '{$user->getUsername()}' has task '{$task->getDescription()}'.";
             } else {
-                echo "The user already has this task.";
+                echo self::ALREADY_BINDED_MESSAGE;
             }
         }
         return $this->render("admin/bind/adminBindTaskAndUser.html.twig", [
@@ -264,6 +266,102 @@ class AdminController extends AbstractController
             "header" => "Bind task to user!",
             "users"  => $userInfoProvider->getUsersWithTasks(),
             "form"   => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/bind/sprintAndTask", name="app_admin_bind_sprint_and_task")
+     */
+    public function bindSprintAndTask(Request $request, SprintInfoProvider $sprintInfoProvider): Response
+    {
+        $sprint = new Sprint();
+        $sprintRepository = $this->getDoctrine()->getRepository(Sprint::class);
+        $taskRepository = $this->getDoctrine()->getRepository(Task::class);
+        $form = $this->createForm(SprintAndTaskBinding::class, $sprint);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $task = $taskRepository->find($sprint->getPlainTask());
+            $sprint = $sprintRepository->find($sprint->getPlainSprint());
+
+            if (!$sprintInfoProvider->doesSprintOwnTask($sprint, $task)) {
+                $sprint->addTask($task);
+                $this->getDoctrine()->getManager()->persist($sprint);
+                $this->getDoctrine()->getManager()->flush();
+                echo "Now sprint '{$sprint->getName()}' has task '{$task->getDescription()}'.";
+            } else {
+                echo self::ALREADY_BINDED_MESSAGE;
+            }
+        }
+        return $this->render("admin/bind/adminBindSprintAndTask.html.twig", [
+            "title"  => "Bind task to sprint",
+            "header" => "Bind task to sprint!",
+            "sprints"  => $sprintRepository->findAll(),
+            "form"   => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/bind/sprintAndUser", name="app_admin_bind_sprint_and_user")
+     */
+    public function bindSprintAndUser(Request $request, SprintInfoProvider $sprintInfoProvider): Response
+    {
+        $sprint = new Sprint();
+        $sprintRepository = $this->getDoctrine()->getRepository(Sprint::class);
+        $userRepository = $this->getDoctrine()->getRepository(User::class);
+        $form = $this->createForm(SprintAndUserBinding::class, $sprint);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $userRepository->find($sprint->getPlainUser());
+            $sprint = $sprintRepository->find($sprint->getPlainSprint());
+
+            if (!$sprintInfoProvider->doesSprintOwnUser($sprint, $user)) {
+                $sprint->addUser($user);
+                $this->getDoctrine()->getManager()->persist($sprint);
+                $this->getDoctrine()->getManager()->flush();
+                echo "Now sprint '{$sprint->getName()}' has user '{$user->getUsername()}'.";
+            } else {
+                echo self::ALREADY_BINDED_MESSAGE;
+            }
+        }
+        return $this->render("admin/bind/adminBindSprintAndUser.html.twig", [
+            "title"    => "Bind user to sprint",
+            "header"   => "Bind user to sprint!",
+            "sprints"  => $sprintRepository->findAll(),
+            "form"     => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/bind/sprintAndUsergroup", name="app_admin_bind_sprint_and_usergroup")
+     */
+    public function bindSprintAndUsergroup(Request $request, SprintInfoProvider $sprintInfoProvider): Response
+    {
+        $sprint = new Sprint();
+        $sprintRepository = $this->getDoctrine()->getRepository(Sprint::class);
+        $usergroupRepository = $this->getDoctrine()->getRepository(Usergroup::class);
+        $form = $this->createForm(SprintAndUsergroupBinding::class, $sprint);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $usergroup = $usergroupRepository->find($sprint->getPlainUsergroup());
+            $sprint = $sprintRepository->find($sprint->getPlainSprint());
+
+            if (!$sprintInfoProvider->doesSprintOwnUsergroup($sprint, $usergroup)) {
+                $sprint->addUsergroup($usergroup);
+                $this->getDoctrine()->getManager()->persist($sprint);
+                $this->getDoctrine()->getManager()->flush();
+                echo "Now sprint '{$sprint->getName()}' has user group '{$usergroup->getName()}'.";
+            } else {
+                echo self::ALREADY_BINDED_MESSAGE;
+            }
+        }
+        return $this->render("admin/bind/adminBindSprintAndUsergroup.html.twig", [
+            "title"    => "Bind usergroup to sprint",
+            "header"   => "Bind usergroup to sprint!",
+            "sprints"  => $sprintRepository->findAll(),
+            "form"     => $form->createView(),
         ]);
     }
 }

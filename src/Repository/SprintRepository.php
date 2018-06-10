@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Sprint;
+use App\Entity\Task;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

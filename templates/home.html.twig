@@ -1,5 +1,10 @@
 {% extends "base.html.twig" %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+{% endblock %}
+
 {% block contents %}
     <h4>{{ subheader }}</h4>
     <h6>{{ roleNote }}</h6>
@@ -12,7 +17,13 @@
     <ol>
     {% for task in tasks %}
         <li>
+            {% if task.isDone %}
+                <div class="doneTask">
+            {% else %}
+                <div>
+            {% endif %}
             {{ task.description }}
+            </div>
         </li>
     {% endfor %}
     </ol>
