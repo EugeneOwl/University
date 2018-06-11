@@ -15,6 +15,8 @@ There are also such entities as **tasktype** and **sprintstatus** which are just
 
 Also intermediate tables for '_ManyToMany_' relations.
 
+![UML](https://github.com/EugeneOwl/University/blob/master/public/images/university_UML.png)
+
 #### Important moment in architecture
  There is also one intermediate table (like for '_ManyToMany_' relation) for '_OneToMany_' relation. Это решение обосновано
  1. Необходимостью политики уровней (ведь благодаря ему user не знает ничего о usergroup) 
