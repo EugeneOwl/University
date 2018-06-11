@@ -10,6 +10,7 @@ use App\Entity\Task;
 use App\Entity\User;
 use App\Entity\Usergroup;
 use App\Repository\SprintRepository;
+use App\Repository\TaskRepository;
 
 class SprintInfoProvider
 {
@@ -51,5 +52,38 @@ class SprintInfoProvider
             }
         }
         return false;
+    }
+
+    public function getTaskStatistics(Sprint $sprint): array
+    {
+        $tasks = $sprint->getTasks();
+        $taskCount = count($tasks);
+        $doneTasksCount = 0;
+        foreach ($tasks as $task) {
+            if ($task->getIsDone()) {
+                $doneTasksCount++;
+            }
+        }
+        return [$doneTasksCount, $taskCount];
+    }
+
+    public function getTaskStatistics2(Sprint $sprint): array
+    {
+        return [
+            $this->sprintRepository->getExecutedTaskCount($sprint),
+            $this->sprintRepository->getTaskCount($sprint),
+        ];
+    }
+
+    public function getNotDoneTasksFromClosedSprints(string $statusClosed, TaskRepository $taskRepository): array
+    {
+        $rowTaskIds = $this->sprintRepository->getNotDoneTasksFromClosedSprints($statusClosed);
+        foreach ($rowTaskIds as $sprint) {
+            $notExecutedTaskIds[] = $sprint["id"];
+        }
+        foreach (array_unique($notExecutedTaskIds) as $notExecutedTaskId) {
+            $notExecutedTasks[] = $taskRepository->find($notExecutedTaskId);
+        }
+        return $notExecutedTasks;
     }
 }

@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AdminController extends AbstractController
 {
+    private const STATUS_CLOSED_SPRINT = "closed";
     private const COLLISION_WARNING = "Entity with this name does already exist.";
     private const CREATION_MESSAGE = "Entity created.";
     private const UPDATING_MESSAGE = "Entities updated.";
@@ -182,7 +183,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/new/sprint", name="app_admin_new_sprint")
      */
-    public function newSprint(Request $request): Response
+    public function newSprint(Request $request, SprintInfoProvider $sprintInfoProvider): Response
     {
         $sprint = new Sprint();
         $sprintRepository = $this->getDoctrine()->getRepository(Sprint::class);
@@ -197,6 +198,13 @@ class AdminController extends AbstractController
         ) {
             $status = $this->getDoctrine()->getRepository(Sprintstatus::class)->find($sprint->getPlainStatus());
             $sprint->setStatus($status);
+            $defaultTasks = $sprintInfoProvider->getNotDoneTasksFromClosedSprints(
+                self::STATUS_CLOSED_SPRINT,
+                $this->getDoctrine()->getRepository(Task::class)
+            );
+            foreach ($defaultTasks as $defaultTask) {
+                $sprint->addTask($defaultTask);
+            }
             $this->getDoctrine()->getManager()->persist($sprint);
             $this->getDoctrine()->getManager()->flush();
             echo self::CREATION_MESSAGE;
@@ -213,13 +221,12 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/edit/sprint", name="app_admin_edit_sprint")
      */
-    public function editSprint(Request $request): Response
+    public function editSprint(Request $request, SprintInfoProvider $sprintInfoProvider): Response
     {
         $sprint = new Sprint();
         $sprintRepository = $this->getDoctrine()->getRepository(Sprint::class);
         $form = $this->createForm(SprintEditing::class, $sprint);
 
-        $doesSprintExist = false;
         $form->handleRequest($request);
         if (
             $form->isSubmitted() &&
@@ -227,6 +234,12 @@ class AdminController extends AbstractController
         ) {
             $status = $this->getDoctrine()->getRepository(Sprintstatus::class)->find($sprint->getPlainStatus());
             $sprint = $sprintRepository->find($sprint->getPlainSprint());
+
+            if ($status->getName() === self::STATUS_CLOSED_SPRINT) {
+                list($doneTaskCount, $taskCount) = $sprintInfoProvider->getTaskStatistics2($sprint);
+                $statistics = "Statistics report: $doneTaskCount / $taskCount tasks done in '{$sprint->getName()}' sprint.";
+            }
+
             $sprint->setStatus($status);
             $this->getDoctrine()->getManager()->persist($sprint);
             $this->getDoctrine()->getManager()->flush();
@@ -237,6 +250,7 @@ class AdminController extends AbstractController
             "header"           => "Update sprint status!",
             "form"             => $form->createView(),
             "sprints"          => $sprintRepository->findAll(),
+            "statistics"       => $statistics ?? "",
         ]);
     }
 
