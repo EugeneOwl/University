@@ -8,26 +8,57 @@
 {% block contents %}
     <h4>{{ subheader }}</h4>
     <h6>{{ roleNote }}</h6>
+
     <br>
-    <h5>Your tasks</h5>
-    {% if tasks is empty %}
-        <p>(empty set)</p>
-    {% endif %}
+    <div>
+        <h5>Your tasks</h5>
+        {% if tasks is empty %}
+            <p>(empty set)</p>
+        {% endif %}
 
-    <ol>
-    {% for task in tasks %}
-        <li>
-            {% if task.isDone %}
-                <div class="doneTask">
-            {% else %}
-                <div>
-            {% endif %}
-            {{ task.description }}
-            </div>
-        </li>
-    {% endfor %}
-    </ol>
+        <ol>
+        {% for task in tasks %}
+            <li>
+                {% if task.isDone %}
+                    <div class="doneTask">
+                {% else %}
+                    <div>
+                {% endif %}
+                {{ task.description }}
+                </div>
+            </li>
+        {% endfor %}
+        </ol>
+    </div>
 
+    <br><br>
+    <div>
+        <h5>Task from your sprints</h5>
+        {% if sprintTasks is empty %}
+            <p>(empty set)</p>
+        {% endif %}
+
+        <ol>
+            {% for sprintName in sprintTasks|keys %}
+                <li>
+                    {{ sprintName }}
+                    <ul>
+                        {% for taskName in sprintTasks[sprintName]|keys %}
+                        <li>
+                            {% if sprintTasks[sprintName][taskName] %}
+                                <div class="doneTask">
+                            {% else %}
+                                <div>
+                            {% endif %}
+                            {{ taskName }}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
     <p>
         <a href="{{ path('app_admin') }}">go to admin page</a>
     </p>

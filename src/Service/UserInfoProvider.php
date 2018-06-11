@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Service;
 
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 
 class UserInfoProvider
@@ -38,5 +39,14 @@ class UserInfoProvider
             }
         }
         return false;
+    }
+
+    public function getUserSprintTasks(User $user): array
+    {
+       $rawTasks = $this->userRepository->getUserSprintTasks($user);
+       foreach ($rawTasks as $rawTask) {
+            $tasks[$rawTask["name"]][$rawTask["description"]] = $rawTask["execution"];
+       }
+       return $tasks;
     }
 }

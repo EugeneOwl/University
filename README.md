@@ -51,7 +51,7 @@ User can get to the admin page if he has an **admin** role privilege. Administra
 ### Requirements
 1. After admin close sprint (with a special status) he gets a statistics report e.g. "3 / 5 tasks done in 'Rush week' sprint."
 2. When admin creates new sprint all of not executed tasks from existing closed sprints automatically get to the new one.
-3. System is quite flexible: User without user group, task without task type, user without tasks, tasks without users etc. Each one is quite  
+3. System is quite flexible: User without user group, task without task type, user without tasks, tasks without users etc. Each entity is quite independent. 
 When configuring entities in each case admin sees the existing exemplars of target entity and some more info.
 
 Forms are not hardcodded into html but implemented as special objects, processed special way in controllers and displayed special way in templates (see _'src/Form'_, _'src/Controller'_, _'templates'_).

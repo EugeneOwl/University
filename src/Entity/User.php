@@ -66,7 +66,7 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Task", inversedBy="users")
-     * @ORM\JoinTable(name="users_tasks")
+     * @ORM\JoinTable(name="user_task")
      */
     private $tasks;
 

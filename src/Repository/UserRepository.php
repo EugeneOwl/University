@@ -34,4 +34,28 @@ class UserRepository extends ServiceEntityRepository
         ]);
         return count($stmt->fetchAll()) === 0;
     }
+
+    public function getUserSprintTasks(User $user): array
+    {
+        $sql = <<<SQL
+SELECT `sprint`.`name`, `task`.`description`, `task`.`execution`
+   FROM (
+         `tasks` `task`,
+         `users` `user`,
+         `sprints` `sprint`
+         )
+   JOIN `sprint_task` `s_t`
+     ON `s_t`.`task_id` = `task`.`id` AND
+        `s_t`.`sprint_id` = `sprint`.`id`
+   JOIN `sprint_user` `s_u`
+     ON `s_u`.`user_id` = `user`.`id` AND
+        `s_u`.`sprint_id` = `sprint`.`id` AND
+        `user`.`id` = :userId;
+SQL;
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute([
+            "userId" => $user->getId(),
+        ]);
+        return $stmt->fetchAll();
+    }
 }
