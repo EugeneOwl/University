@@ -6,9 +6,7 @@ namespace App\Form\Admin;
 
 
 use App\Entity\Sprint;
-use App\Entity\Task;
 use App\Repository\SprintstatusRepository;
-use App\Repository\TasktypeRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

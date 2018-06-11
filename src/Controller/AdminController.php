@@ -14,6 +14,7 @@ use App\Form\Admin\SprintAndTaskBinding;
 use App\Form\Admin\SprintAndUserBinding;
 use App\Form\Admin\SprintAndUsergroupBinding;
 use App\Form\Admin\SprintCreating;
+use App\Form\Admin\SprintEditing;
 use App\Form\Admin\SprintstatusCreating;
 use App\Form\Admin\TaskAndUserBinding;
 use App\Form\Admin\TaskCreating;
@@ -210,6 +211,36 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/edit/sprint", name="app_admin_edit_sprint")
+     */
+    public function editSprint(Request $request): Response
+    {
+        $sprint = new Sprint();
+        $sprintRepository = $this->getDoctrine()->getRepository(Sprint::class);
+        $form = $this->createForm(SprintEditing::class, $sprint);
+
+        $doesSprintExist = false;
+        $form->handleRequest($request);
+        if (
+            $form->isSubmitted() &&
+            $form->isValid()
+        ) {
+            $status = $this->getDoctrine()->getRepository(Sprintstatus::class)->find($sprint->getPlainStatus());
+            $sprint = $sprintRepository->find($sprint->getPlainSprint());
+            $sprint->setStatus($status);
+            $this->getDoctrine()->getManager()->persist($sprint);
+            $this->getDoctrine()->getManager()->flush();
+            echo self::UPDATING_MESSAGE;
+        }
+        return $this->render("admin/edit/adminEditSprint.html.twig", [
+            "title"            => "update sprint",
+            "header"           => "Update sprint status!",
+            "form"             => $form->createView(),
+            "sprints"          => $sprintRepository->findAll(),
+        ]);
+    }
+
+    /**
      * @Route("/admin/edit/task", name="app_admin_edit_task")
      */
     public function editTask(Request $request): Response
@@ -350,6 +381,11 @@ class AdminController extends AbstractController
 
             if (!$sprintInfoProvider->doesSprintOwnUsergroup($sprint, $usergroup)) {
                 $sprint->addUsergroup($usergroup);
+                foreach ($usergroup->getUsers() as $user) {
+                    if (!$sprintInfoProvider->doesSprintOwnUser($sprint, $user)) {
+                        $sprint->addUser($user);
+                    }
+                }
                 $this->getDoctrine()->getManager()->persist($sprint);
                 $this->getDoctrine()->getManager()->flush();
                 echo "Now sprint '{$sprint->getName()}' has user group '{$usergroup->getName()}'.";
