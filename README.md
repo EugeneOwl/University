@@ -29,7 +29,7 @@ Also intermediate tables for '_ManyToMany_' relations.
 Appropriate tables for each entity are called by _their entity_ name in the _plural_ with a _small letter_.
 
 ### User
-When log up **user** specifies name of his group and they bind to each other with a bidirectional relation. At home page which is available after authorization each user sees the list of his own tasks and their state (done / not done).
+When log up **user** specifies name of his group and they bind to each other with a bidirectional relation. At home page which is available after authorization each user sees the list of his own tasks and their state (done / not done). Also the tasks and their state from sprints where user participates.
 
 ### Admin page
 User can get to the admin page if he has an **admin** role privilege. Administrator can:
